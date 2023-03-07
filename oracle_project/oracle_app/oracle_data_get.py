@@ -20,6 +20,8 @@ try:
         # print(col_names[1])
         # print(col_names[2])
         x = cur.fetchall()
+
+     
         for i in x:
 
             # print(i[0])

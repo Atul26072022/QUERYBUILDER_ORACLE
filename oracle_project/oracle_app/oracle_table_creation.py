@@ -1,5 +1,5 @@
 import cx_Oracle
-from rest_framework.response import Response
+
 
 dict2 = {
     "name" : "esd",
@@ -13,7 +13,7 @@ def create_table(self,dict2):
 
 
     try:
-        with cx_Oracle.connect('system/1234')as co:
+        with cx_Oracle.connect('C##ABC/1234')as co:
             print("Connected")
             cur=co.cursor()
             cur.execute(f"CREATE TABLE {dict2['name']}( {dict2['Company']} varchar2(10), {dict2['emp']} varchar2(10))")
