@@ -13,7 +13,7 @@ class Oracleopration:
             
 
     def Oracle_fetch_data(self):
-        l1 = []
+        required_data = []
         try:
             with cx_Oracle.connect('system/1234@//localhost:1521/XE') as co:
                 print("Connected")
@@ -27,11 +27,11 @@ class Oracleopration:
 
                     cur.execute(f"select * from C##ABC.{x[i][0]}")
                     col_names = [row[0] for row in cur.description]
-                    l1.append({
+                    required_data.append({
                         x[i][0] : col_names
                     })
                 
-                print(l1)
+                print(required_data)
 
             return ({"Message : Data Fetched successfully"})
                 
@@ -42,41 +42,47 @@ class Oracleopration:
 
 
     def Oracle_create_table(self,dict2):
-        l1 = []
-        l2 = []
+        table_name = []
+        coloumn_name = []
+        existing_coloumn_name = []
         try:
             with cx_Oracle.connect('system/1234@//localhost:1521/XE') as co:
                 print("Connected")
                 cur=co.cursor()
-                # print(cur)
                 cur.execute(" SELECT table_name FROM all_tables WHERE owner='C##ABC' ")
                 x = cur.fetchall()
 
                 for i in x:
-                    l1.append(i[0])
+                    table_name.append(i[0])
 
-                if dict2["TableName"].upper() in l1:
+                if dict2["TableName"].upper() in table_name:
                     cur.execute(f"select * from C##ABC.{dict2['TableName']}")
                     col_names = [row[0] for row in cur.description]
-                    print(col_names)
+                
                     for i in dict2["Coloumn"].values():
+                        existing_coloumn_name.append(i.upper())
                         if i.upper() not in col_names:
-                            l2.append(i)
-                    if len(l2) > 0:
-                        for i in l2:
+                            coloumn_name.append(i)
+                    if len(coloumn_name) > 0:
+                        for i in coloumn_name:
                             cur.execute(f"ALTER TABLE C##ABC.{dict2['TableName']} ADD {i} VARCHAR2(50)")
-                        print("Table Altered")
-                    print("Table and coloumn already created")
+                    for i in col_names:
+                        if i not in existing_coloumn_name:
+                            if i != 'ID':
+                                cur.execute(f"ALTER TABLE C##ABC.{dict2['TableName']} DROP column {i}")
+                    print("Table Altered")
                 else:
                 
                     cur.execute(f"CREATE TABLE C##ABC.{dict2['TableName']}(id int NOT NULL)")
-                    # print(dict2)
+
                     for key in dict2["Coloumn"].values():
                         cur.execute(f"ALTER TABLE C##ABC.{dict2['TableName']} ADD {key} VARCHAR2(50)")
                     print("Table Created")
+            print("Table and coloumn already exist")
+
             
         except Exception as e:
-            print("Error: ",str(e))
+            # print("Error: ",str(e))
             return ({"Message : Table not created Something went wrong"})
             
 
@@ -110,14 +116,15 @@ dict3 = {
     "Coloumn" : {
         "a" : "x",
         "b" : "y",
-        "c" : "z"
+        "c" : "u",
+        "d" : "v"
     }
 }
 
 
-a = Oracleopration()
+# a = Oracleopration()
 # print(a.Oracle_drop_table("XYAC"))
 # a.Oracle_connection()
-a.Oracle_fetch_data()
+# a.Oracle_fetch_data()
 
-# print(a.Oracle_create_table(dict3))
+# print(a.Oracle_creapte_table(dict3))

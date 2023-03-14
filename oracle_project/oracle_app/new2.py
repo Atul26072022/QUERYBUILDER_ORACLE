@@ -6,15 +6,16 @@ dict2 = {
         "a" : "x",
         "b" : "y",
         "c" : "z",
-        'd' : 'r',
-        'e' : 'q'
+        
+        'e' : 'ff'
     }
 }
 
 # print(dict2["Coloumn"].values())
 
-l1 = []
-l2 = []
+table_name = []
+coloumn_name = []
+existing_coloumn_name = []
 with cx_Oracle.connect('system/1234@//localhost:1521/XE') as co:
     print("Connected")
     cur=co.cursor()
@@ -23,19 +24,24 @@ with cx_Oracle.connect('system/1234@//localhost:1521/XE') as co:
     x = cur.fetchall()
 
     for i in x:
-        l1.append(i[0])
+        table_name.append(i[0])
 
-    if dict2["TableName"].upper() in l1:
+    if dict2["TableName"].upper() in table_name:
         cur.execute(f"select * from C##ABC.{dict2['TableName']}")
         col_names = [row[0] for row in cur.description]
-        print(col_names)
+    
         for i in dict2["Coloumn"].values():
+            existing_coloumn_name.append(i.upper())
             if i.upper() not in col_names:
-                l2.append(i)
-        if len(l2) > 0:
-            for i in l2:
+                coloumn_name.append(i)
+        if len(coloumn_name) > 0:
+            for i in coloumn_name:
                 cur.execute(f"ALTER TABLE C##ABC.{dict2['TableName']} ADD {i} VARCHAR2(50)")
-            print("Table Altered")
+        for i in col_names:
+            if i not in existing_coloumn_name:
+                if i != 'ID':
+                    cur.execute(f"ALTER TABLE C##ABC.{dict2['TableName']} DROP column {i}")
+        print("Table Altered")
         print("Table and coloumn already created")
     else:
     
@@ -47,15 +53,3 @@ with cx_Oracle.connect('system/1234@//localhost:1521/XE') as co:
     
 
 
-
-    # print(l2)
-    # print(len(l2))
-                
-
-    # else:
-    #     print("NO")     
-    # cur.execute(f"CREATE TABLE C##ABC.{dict2['TableName']}(id int NOT NULL)")
-    # print(dict2)
-    # for key in dict2["Coloumn"].values():
-    #     cur.execute(f"ALTER TABLE C##ABC.{dict2['TableName']} ADD {key} VARCHAR2(50)")
-    # print("Table Created")
