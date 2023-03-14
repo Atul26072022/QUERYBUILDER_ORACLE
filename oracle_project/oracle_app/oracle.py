@@ -9,7 +9,7 @@ dict1 = {
 
 try:
     with cx_Oracle.connect('system/1234') as co:
-        print("Connected")
+        print("Connected")      
         cur = co.cursor()
 
 
@@ -22,7 +22,7 @@ try:
         co.commit()
         cur.close()
         print("DATA INSERTED")
-        
+    
         
         
         
