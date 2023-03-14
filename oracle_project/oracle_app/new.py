@@ -16,7 +16,7 @@ class Oracleopration:
         required_data = []
         try:
             with cx_Oracle.connect('system/1234@//localhost:1521/XE') as co:
-                print("Connected")
+                # print("Connected")
                 cur = co.cursor()
 
 
@@ -47,7 +47,7 @@ class Oracleopration:
         existing_coloumn_name = []
         try:
             with cx_Oracle.connect('system/1234@//localhost:1521/XE') as co:
-                print("Connected")
+                # print("Connected")
                 cur=co.cursor()
                 cur.execute(" SELECT table_name FROM all_tables WHERE owner='C##ABC' ")
                 x = cur.fetchall()
@@ -70,17 +70,15 @@ class Oracleopration:
                         if i not in existing_coloumn_name:
                             if i != 'ID':
                                 cur.execute(f"ALTER TABLE C##ABC.{dict2['TableName']} DROP column {i}")
-                    print("Table Altered")
+                    return ({"Message" : "Table Altered"})
                 else:
                 
                     cur.execute(f"CREATE TABLE C##ABC.{dict2['TableName']}(id int NOT NULL)")
 
                     for key in dict2["Coloumn"].values():
                         cur.execute(f"ALTER TABLE C##ABC.{dict2['TableName']} ADD {key} VARCHAR2(50)")
-                    print("Table Created")
-            print("Table and coloumn already exist")
-
-            
+                    return ({"Message" : "Table Created"})
+                
         except Exception as e:
             # print("Error: ",str(e))
             return ({"Message : Table not created Something went wrong"})
@@ -93,7 +91,7 @@ class Oracleopration:
 
         try:
             with cx_Oracle.connect('system/1234@//localhost:1521/XE') as co:
-                print("Connected")
+                # print("Connected")
                 cur = co.cursor()
 
 
@@ -115,16 +113,16 @@ dict3 = {
     "TableName" : "rrrabc",
     "Coloumn" : {
         "a" : "x",
-        "b" : "y",
         "c" : "u",
-        "d" : "v"
+        "d" : "v",
+        "e" : "gg"
     }
 }
 
 
-# a = Oracleopration()
+a = Oracleopration()
 # print(a.Oracle_drop_table("XYAC"))
 # a.Oracle_connection()
-# a.Oracle_fetch_data()
+a.Oracle_fetch_data()
 
-# print(a.Oracle_creapte_table(dict3))
+# print(a.Oracle_create_table(dict3))
