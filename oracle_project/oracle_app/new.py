@@ -33,11 +33,11 @@ class Oracleopration:
                 
                 print(required_data)
 
-            return ({"Message : Data Fetched successfully"})
+            return ({"Message" : "Data Fetched successfully"})
                 
         except Exception as e:
             print("Error: ",str(e))
-            return ({"Message : Data Not Fetched"})
+            return ({"Message" : "Data Not Fetched"})
         
 
 
@@ -81,7 +81,7 @@ class Oracleopration:
                 
         except Exception as e:
             # print("Error: ",str(e))
-            return ({"Message : Table not created Something went wrong"})
+            return ({"Message" : "Table not created Something went wrong"})
             
 
     
@@ -97,11 +97,33 @@ class Oracleopration:
 
                 cur.execute(f" DROP TABLE C##ABC.{table_name}")
                 
-            return ({"Message : Table Deleted Successfully"})
+            return ({"Message" : "Table Deleted Successfully"})
                 
         except Exception as e:
             print("Error: ",str(e))
-            return ({"Message : Table not deleted"})
+            return ({"Message" : "Table not deleted"})
+        
+
+    def oracle_data_insertion(self , list1):
+
+        try:
+            with cx_Oracle.connect('system/1234@//localhost:1521/XE') as co:
+                print("Connected")      
+                cur = co.cursor()
+
+                for i in list1:
+                    cur.execute("INSERT INTO ORACLE_APP_STUDENT VALUES (:1,:2,:3)",[i["id"],i["name"],i["age"]])
+                    
+                co.commit()
+                    
+                return ({"Message" : "Data Inserted Successfully" })
+                
+            
+            
+                
+        except Exception as e:
+            # print("Error: ",str(e))
+            return ({"Message" : "Data not inserted successfully something went wrong"})
 
 
     
@@ -119,10 +141,23 @@ dict3 = {
     }
 }
 
+list2 = [{
+        "id" : 21,
+        "name" : "rahulaaa",
+        "age" : 23
+    },
+    {
+        "id" : 22,
+        "name" : "rahulbbb",
+        "age" : 23
+    
+    }
+    ]
 
 a = Oracleopration()
 # print(a.Oracle_drop_table("XYAC"))
 # a.Oracle_connection()
-a.Oracle_fetch_data()
+# a.Oracle_fetch_data()
 
 # print(a.Oracle_create_table(dict3))
+print(a.oracle_data_insertion(list2))
